@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quote Generator (Without Processing Time)</title>
+  <style>
+    .no-select {
+      -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+      -khtml-user-select: none; /* Konqueror HTML */
+      -moz-user-select: none; /* Old versions of Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+      user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+    }
+  </style>
+</head>
+<body>
+  <h1>Quote Generator (Without Processing Time)</h1>
+  <div>
+    <label for="service-select">Select Service:</label>
+    <select id="service-select" onchange="displayServiceDetails()">
+      <option value="">Select a service</option>
+      <!-- Options for services -->
+      <option value="NBI Renewal (Regular)|2300">NBI Renewal (Regular)</option>
+      <option value="NBI Renewal (Rush)|4300">NBI Renewal (Rush)</option>
+      <option value="NBI New Application (Regular)|2300">NBI New Application (Regular)</option>
+      <option value="NBI New Application (Rush)|4300">NBI New Application (Rush)</option>
+      <option value="Acquiring PSA Birth Certificate|1000">Acquiring PSA Birth Certificate</option>
+      <option value="Acquiring PSA CENOMAR|1000">Acquiring PSA CENOMAR</option>
+      <option value="Acquiring PSA Marriage Certificate">Acquiring PSA Marriage Certificate</option>
+      <option value="DFA Apostille|1650">DFA Apostille</option>
+      <option value="LBC shipping within the Philippines|300">LBC shipping within the Philippines</option>
+      <option value="DHL shipping to Asia|2000">DHL shipping to Asia</option>
+      <option value="DHL shipping to EU|4000">DHL shipping to EU</option>
+      <option value="Acquiring CAV requirements from school|1500">Acquiring CAV requirements from school</option>
+      <option value="CHED CAV Processing|2500">CHED CAV Processing</option>
+      <option value="DepEd CAV Processing|2500">DepEd CAV Processing</option>
+      <option value="UAE Stamping (School docs)|6550">UAE Stamping (School docs)</option>
+      <option value="UAE Stamping">UAE Stamping</option>
+      <option value="Finland Stamping|3150">Finland Stamping</option>
+      <option value="CE Stamping (Regular)|2400">CE Stamping (Regular)</option>
+      <option value="TECO Stamping|2300">TECO Stamping</option>
+    </select>
+  </div>
+  <div>
+    <label for="service-rate">Rate (PHP):</label>
+    <input type="number" id="service-rate" readonly>
+    <label for="service-quantity">Quantity:</label>
+    <input type="number" id="service-quantity" value="1" min="1">
+    <button onclick="generateQuote()">Add to Quote</button>
+  </div>
+  <div>
+    <h2>Generated Quote:</h2>
+    <div id="generated-quote">
+      <!-- Generated quote items will be displayed here -->
+    </div>
+  </div>
+  <div>
+    <br>
+    <strong> TOTAL:</strong> &#8369;<span id="total-price">0</span>
+  </div>
+  <script>
+    let totalPrice = 0;
+
+    function displayServiceDetails() {
+      const selectElement = document.getElementById("service-select");
+      const selectedOption = selectElement.options[selectElement.selectedIndex].value;
+
+      if (selectedOption) {
+        const [serviceName, serviceRate] = selectedOption.split("|");
+        document.getElementById("service-rate").value = parseInt(serviceRate);
+      } else {
+        document.getElementById("service-rate").value = "";
+      }
+    }
+
+    function generateQuote() {
+      const serviceName = document.getElementById("service-select").value;
+      const serviceRate = parseInt(document.getElementById("service-rate").value);
+      const serviceQuantity = parseInt(document.getElementById("service-quantity").value);
+
+      if (!serviceName || !serviceRate || isNaN(serviceRate) || isNaN(serviceQuantity) || serviceQuantity < 1) {
+        alert("Please select a valid service and enter a valid quantity and rate.");
+        return;
+      }
+
+      const totalRate = serviceRate * serviceQuantity;
+      totalPrice += totalRate;
+
+      let quoteItem = `<div>${serviceQuantity > 1 ? serviceQuantity + " " : ""}${serviceName.split("|")[0]}${serviceQuantity > 1 ? " (" + "&#8369;" + serviceRate + " each)" : ""}: &#8369;${totalRate} <button class="no-select" onclick="deleteItem(event)">Delete</button></div>`;
+
+      document.getElementById("generated-quote").innerHTML += quoteItem;
+      document.getElementById("total-price").innerText = totalPrice;
+
+      // Reset quantity text box to 1 after adding service to quote
+      document.getElementById("service-quantity").value = 1;
+    }
+
+    function deleteItem(event) {
+      const itemDiv = event.target.parentElement;
+      const itemValue = itemDiv.textContent.trim();
+      const itemRate = parseInt(itemValue.match(/₱(\d+)/)[1]);
+      totalPrice -= itemRate;
+      document.getElementById("total-price").innerText = totalPrice;
+      itemDiv.remove();
+    }
+  </script>
+  <script src="Quote Generator (WithOUT Processing Time).js"></script>
+</body>
+</html>
