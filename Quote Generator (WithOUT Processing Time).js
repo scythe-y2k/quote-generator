@@ -25,7 +25,13 @@ function generateQuote() {
   const totalRate = serviceRate * serviceQuantity;
   totalPrice += totalRate;
 
-  let quoteItem = `<div>${serviceQuantity > 1 ? serviceQuantity + " " : ""}${serviceName.split("|")[0]}${serviceQuantity > 1 ? " (" + "&#8369;" + serviceRate + " each)" : ""}: &#8369;${totalRate} <button class="no-select" onclick="deleteItem(event)">Delete</button></div>`;
+  let serviceDisplayName = serviceName.split("|")[0];
+
+  if (serviceDisplayName.includes("UAE Stamping")) {
+    serviceDisplayName = "UAE Stamping";
+  }
+
+  let quoteItem = `<div>${serviceQuantity > 1 ? serviceQuantity + " " : ""}${serviceDisplayName}${serviceQuantity > 1 ? " (" + "&#8369;" + serviceRate + " each)" : ""}: &#8369;${totalRate} <button class="no-select" onclick="deleteItem(event)">Delete</button></div>`;
 
   document.getElementById("generated-quote").innerHTML += quoteItem;
   document.getElementById("total-price").innerText = totalPrice;
